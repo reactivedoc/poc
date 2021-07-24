@@ -1,0 +1,9 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+}
+
+plugins {
+	id 'io.github.reactivedoc.java-common-conventions'
+}

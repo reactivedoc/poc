@@ -1,0 +1,18 @@
+plugins {
+	id 'io.github.reactivedoc.java-application-conventions'
+}
+
+group = 'io.github.reactivedoc'
+
+dependencies {
+	implementation 'io.vertx:vertx-core'
+	implementation 'org.apache.logging.log4j:log4j-core'
+
+	implementation project(':reactivedoc-api')
+	implementation project(':reactivedoc-bootstrap')
+	implementation project(':reactivedoc-core')
+}
+
+application {
+	mainClass = 'io.github.reactivedoc.app.App'
+}

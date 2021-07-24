@@ -1,0 +1,14 @@
+digraph dataflow {
+    graph [dpi = 100, fontname="Sans"]
+    node [fontname = "Sans"]
+    edge [fontname = "Sans"]
+    node [shape=rectangle, fixedsize=true, width=2.5, height=0.5]
+    node [style=filled, fillcolor="#cfe2f3"]
+
+    ".md" -> ".pot" -> ".po"
+    ".md" -> "html snippet" [label="flexmark"]
+    {"header/footer", "html snippet"} -> "stylesheetless html"
+    {"stylesheetless html","theme"} -> ".html"
+    {".po",".md"} -> "translated .md"
+    "translated .md" -> "html snippet" [label="flexmark"]
+}

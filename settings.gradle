@@ -1,0 +1,5 @@
+rootProject.name = 'reactivedoc'
+include 'reactivedoc-api'
+include 'reactivedoc-bootstrap'
+include 'reactivedoc-core'
+include 'reactivedoc-cli'
