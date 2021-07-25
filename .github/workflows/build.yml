@@ -26,7 +26,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - run: |
           ./gradlew spotlessCheck build --no-daemon
-          ./gradlew :reactivedoc-cli:run --args="--source $(pwd)/docs --output $(pwd)/build/docs"
+          ./gradlew :reactivedoc-cli:run --args="--source $(pwd)/docs --output $(pwd)/build/docs" --no-daemon
       - uses: actions/upload-artifact@v2
         with:
           name: built document
