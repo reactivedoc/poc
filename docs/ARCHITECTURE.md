@@ -6,3 +6,4 @@
     * Multiple instances could be created to run in parallel
 * All methods need to be idempotent
     * Output could be cached and reused (memorized)
+* All methods may be non-blocking

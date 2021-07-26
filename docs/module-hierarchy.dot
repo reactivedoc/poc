@@ -1,0 +1,32 @@
+digraph "module-hierarchy" {
+    compound=true;
+    graph [dpi = 100, fontname="Sans"]
+    node [fontname = "Sans"]
+    edge [fontname = "Sans"]
+    node [shape=rectangle, fixedsize=true, width=2.5, height=0.5]
+    node [style=filled, fillcolor="#cfe2f3"]
+    rankdir=LR
+
+    core -> api
+    {rank=same api core}
+
+    subgraph cluster_plugin {
+        label = "Plugins"
+        bootstrap [label="Bootstrap"]
+        ogp [label="Open Graph Protocol"]
+    }
+    ogp -> api [ltail=cluster_plugin, label="implement"]
+    ogp -> core [ltail=cluster_plugin, label="inject", style=dashed]
+    subgraph cluster_client {
+        label = "Client"
+        cli [label="Command Line Interface"]
+        lsp_server [label="LSP server"]
+        maven [label="Maven plugin"]
+        gradle [label="Gradle plugin"]
+
+        // Ensure ordering
+        lsp_server -> gradle [style=invis]
+        cli -> maven [style=invis]
+    }
+    maven -> core [ltail=cluster_client]
+}
