@@ -7,5 +7,22 @@ dependencies {
 	compileOnly 'com.google.auto.service:auto-service-annotations'
 	api 'org.apache.logging.log4j:log4j-api'
 	implementation 'io.vertx:vertx-core'
+	implementation 'org.jsoup:jsoup:1.14.1'
 	annotationProcessor 'com.google.auto.service:auto-service'
+	implementation 'com.vladsch.flexmark:flexmark'
+	implementation 'com.vladsch.flexmark:flexmark-util-ast'
+	implementation 'com.vladsch.flexmark:flexmark-util-data'
+	implementation 'com.vladsch.flexmark:flexmark-util-html'
+}
+
+compileJava {
+	doFirst {
+		// this hack is necessary because Flexmark provides no module-info
+		// https://stackoverflow.com/a/58723165
+		options.compilerArgs = [
+			"--module-path",
+			classpath.asPath
+		]
+		classpath = files()
+	}
 }
