@@ -2,7 +2,8 @@
 package io.github.reactivedoc.app;
 
 import io.github.reactivedoc.DirectoryWatcher;
-import io.github.reactivedoc.markdown.MarkdownConverter;
+import io.github.reactivedoc.api.MarkdownConverter;
+import io.github.reactivedoc.api.event.MarkdownUpdated;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.TimeoutStream;
@@ -14,10 +15,8 @@ import io.vertx.core.cli.Option;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,15 +71,16 @@ public class App implements AutoCloseable {
     }
   }
 
-  private final MarkdownConverter markdownConverter = new MarkdownConverter();
   private final Path pathToWatch;
   private final Path pathToOutput;
   private final Vertx vertx;
+  private final MarkdownConverter converter;
 
   App(Path pathToWatch, Path pathToOutput) {
     this.pathToWatch = Objects.requireNonNull(pathToWatch);
     this.pathToOutput = Objects.requireNonNull(pathToOutput);
     this.vertx = Vertx.vertx();
+    this.converter = ServiceLoader.load(MarkdownConverter.class).findFirst().orElseThrow();
   }
 
   private static String replaceFileExt(String filename) {
@@ -166,14 +166,19 @@ public class App implements AutoCloseable {
     String destFile = destDir.resolve(replaceFileExt(source.getFileName().toString())).toString();
     if (filename.endsWith(".md")) {
       logger.info("build {} and save it to {}", source, destFile);
-      return vertx
-          .fileSystem()
-          .readFile(filename)
-          .map(markdownConverter::convert)
-          .map(charSequence -> Buffer.buffer(charSequence.toString()))
-          .flatMap(html -> vertx.fileSystem().writeFile(destFile, html))
-          .onSuccess(v -> logger.debug("write HTML to {} successfully", destFile))
-          .onFailure(Throwable::printStackTrace);
+      Future<MarkdownUpdated> future = vertx
+              .fileSystem()
+              .readFile(filename)
+              .map(buffer -> buffer.toString())
+              .map(markdown -> new MarkdownUpdated(source, markdown))
+        .map(event -> Future.future(promise -> {
+          converter.onNext(event);
+
+        }))
+              .map(charSequence -> Buffer.buffer(charSequence.toString()))
+              .flatMap(html -> vertx.fileSystem().writeFile(destFile, html))
+              .onSuccess(v -> logger.debug("write HTML to {} successfully", destFile))
+              .onFailure(Throwable::printStackTrace);
     } else {
       logger.debug("{} is not MD file", filename);
       return Future.succeededFuture();

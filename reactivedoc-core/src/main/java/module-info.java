@@ -2,6 +2,7 @@ module io.github.reactivedoc.core {
   requires io.github.reactivedoc.api;
   requires org.apache.logging.log4j;
   requires io.vertx.core;
+  requires io.vertx.reactivestreams;
 
   uses io.github.reactivedoc.api.HtmlDecorator;
 
