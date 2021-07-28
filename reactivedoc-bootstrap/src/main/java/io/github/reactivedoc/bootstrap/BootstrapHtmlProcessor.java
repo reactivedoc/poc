@@ -7,14 +7,10 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import io.github.reactivedoc.api.MarkdownConverter;
 import io.github.reactivedoc.api.event.HtmlUpdated;
 import io.github.reactivedoc.api.event.MarkdownUpdated;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.Flow;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class BootstrapHtmlProcessor implements MarkdownConverter {
-  private final Set<Flow.Subscriber<? super HtmlUpdated>> subscribers = new HashSet<>();
   private final Parser parser;
   private final HtmlRenderer renderer;
 
@@ -25,34 +21,30 @@ public class BootstrapHtmlProcessor implements MarkdownConverter {
   }
 
   @Override
-  public void subscribe(Flow.Subscriber<? super HtmlUpdated> subscriber) {
-    subscribers.add(subscriber);
-  }
-
-  @Override
-  public void onSubscribe(Flow.Subscription subscription) {}
-
-  @Override
-  public void onNext(MarkdownUpdated item) {
+  public HtmlUpdated apply(MarkdownUpdated markdownUpdated) {
     com.vladsch.flexmark.util.ast.Document flexmarkDocument =
-        parser.parse(item.markdown().toString());
+        parser.parse(markdownUpdated.markdown().toString());
     String html = renderer.render(flexmarkDocument);
-    Document document = Jsoup.parse(html);
-
-    subscribers.forEach(
-        subscriber -> {
-          subscriber.onNext(new HtmlUpdated(item, document.html()));
-        });
+    return new HtmlUpdated(markdownUpdated, decorate(html));
   }
 
-  @Override
-  public void onError(Throwable throwable) {
-    subscribers.forEach(
-        subscriber -> {
-          subscriber.onError(throwable);
-        });
-  }
+  private static final String HEADER =
+      """
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta name="generator" content="reactivedoc 0.1.0">
+                <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+                <script async src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+                </head>
+                <body>
+                """;
 
-  @Override
-  public void onComplete() {}
+  private String decorate(String htmlBody) {
+    Document document = Jsoup.parse(HEADER.concat(htmlBody).concat("</body>"));
+    return document.toString();
+  }
 }

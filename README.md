@@ -32,7 +32,7 @@ What we miss here? We think there are several rooms to improve:
 
 1. Hackable API based on Java standards
     * The core module is enough portable to use from CLI, GUI, Maven, Gradle, or other tools. 
-    * Plug-in use pub/sub based on the [Java Flow API](https://community.oracle.com/docs/DOC-1006738).
+    * Plug-in use pub/sub based on the functional interfce.
 2. Reactive build
     * Once you change a `.md` file, ReactiveDoc runs build, lint, and more necessary tasks automatic and concurrent.
 

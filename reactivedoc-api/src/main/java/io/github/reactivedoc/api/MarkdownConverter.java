@@ -3,6 +3,7 @@ package io.github.reactivedoc.api;
 
 import io.github.reactivedoc.api.event.HtmlUpdated;
 import io.github.reactivedoc.api.event.MarkdownUpdated;
-import java.util.concurrent.Flow;
+import java.util.function.Function;
 
-public interface MarkdownConverter extends Flow.Processor<MarkdownUpdated, HtmlUpdated> {}
+@FunctionalInterface
+public interface MarkdownConverter extends Function<MarkdownUpdated, HtmlUpdated> {}

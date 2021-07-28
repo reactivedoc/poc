@@ -21,7 +21,6 @@ dependencies {
         implementation "org.apache.logging.log4j:log4j-api:${log4j2Version}"
         implementation "org.apache.logging.log4j:log4j-core:${log4j2Version}"
         implementation "io.vertx:vertx-core:${vertxVersion}"
-        implementation "io.vertx:vertx-reactive-streams:${vertxVersion}"
         implementation 'org.gnu.gettext:libintl:0.18.3'
         implementation "com.vladsch.flexmark:flexmark:${flexmarkVersion}"
         implementation "com.vladsch.flexmark:flexmark-util-ast:${flexmarkVersion}"

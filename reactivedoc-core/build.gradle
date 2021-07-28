@@ -6,7 +6,6 @@ dependencies {
 	compileOnly project(':reactivedoc-api')
 	api 'org.apache.logging.log4j:log4j-api'
 	implementation 'io.vertx:vertx-core'
-	implementation 'io.vertx:vertx-reactive-streams'
 	implementation 'com.vladsch.flexmark:flexmark'
 	implementation 'com.vladsch.flexmark:flexmark-util-ast'
 	implementation 'com.vladsch.flexmark:flexmark-util-data'
