@@ -7,3 +7,5 @@ buildscript {
 plugins {
 	id 'io.github.reactivedoc.java-common-conventions'
 }
+
+defaultTasks 'spotlessApply', 'build'
