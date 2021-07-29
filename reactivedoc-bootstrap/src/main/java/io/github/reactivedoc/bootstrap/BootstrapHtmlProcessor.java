@@ -1,6 +1,7 @@
 /* (C) Kengo TODA 2021 */
 package io.github.reactivedoc.bootstrap;
 
+import com.google.auto.service.AutoService;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.data.MutableDataSet;
@@ -10,11 +11,12 @@ import io.github.reactivedoc.api.event.MarkdownUpdated;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+@AutoService(MarkdownConverter.class)
 public class BootstrapHtmlProcessor implements MarkdownConverter {
   private final Parser parser;
   private final HtmlRenderer renderer;
 
-  BootstrapHtmlProcessor() {
+  public BootstrapHtmlProcessor() {
     MutableDataSet options = new MutableDataSet();
     this.parser = Parser.builder(options).build();
     this.renderer = HtmlRenderer.builder(options).build();
@@ -28,6 +30,9 @@ public class BootstrapHtmlProcessor implements MarkdownConverter {
     return new HtmlUpdated(markdownUpdated, decorate(html));
   }
 
+  // TODO add a <title>
+  // TODO manage lang prop of the <html> element
+  // TODO add <link rel="stylesheet"> elements
   private static final String HEADER =
       """
                 <!DOCTYPE html>
